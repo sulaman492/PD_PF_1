@@ -1,6 +1,7 @@
 #include<iostream>
 #include<conio.h>
 #include<windows.h>
+#include<fstream>
 using namespace std;
 int printMenu();
 int checkPassword();
@@ -18,7 +19,7 @@ int removeStudent();
 int viewCourses();
 int removeCourses();
 int coursesEnrollment();
-int checkStudent();
+int checkStudent(string usernameStudent,string passwordStudent);
 int checkEmail();
 int checkPhone();
 int printMenuTeacher();
@@ -35,7 +36,10 @@ void printBody();
 void deleteMenu();
 void gotoxy(int,int);
 int checkPasswordTeacher();
-int x=4,y=7;
+void saveDataPassword();
+void saveDataName();
+void loadData();
+int x=4,y=7,countName=0,countPassword;
 const int arraysize=10;
 string teacher[arraysize];
 string username[arraysize];
@@ -60,18 +64,20 @@ int phoneStudent[arraysize];
 int signinsignup,result,selectRole;
 int main()
 {   
+    loadData();
+    cout<<countName;
     int answer;
     system("cls");
     printHeader();  
     Menu:deleteMenu();
     signinsignup = choice();
     deleteMenu();
-    if(signinsignup==1)                                       
+    if(signinsignup==1)                         //user choses to signup                                    
     {
         setFontColor(1);
         gotoxy(x,y);
         int selectRole=printMenu();
-        if(selectRole==1)
+        if(selectRole==1)                       //user choses admin
         {
             checkAdmin:deleteMenu();
             string username,password;
@@ -83,10 +89,10 @@ int main()
             Sleep(150);
             cout<<"Enter your password : ";
             cin>>password;
-            bool result=administrator(username,password);
+            bool result=administrator(username,password);   //check the identity of admin
             if(result==1)
             {
-                checkTeacher:deleteMenu();
+                checkTeacher:deleteMenu();                   
                 gotoxy(x,y);
                 cout<<"successfully loged in : ";
                 getch();
@@ -143,13 +149,16 @@ int main()
             checkStudent1:deleteMenu();
             gotoxy(x,y);
             Sleep(150);
+            string passwordStudent,usernameStudent;
             cout<<"Enter your username : ";
-            cin>>usernameStudent[0];
+            //cin>>usernameStudent[countName];
+            cin>>usernameStudent;
             gotoxy(x,y+1);
             Sleep(150);
             cout<<"Enter your password : ";
-            cin>>passwordStudent[0];
-            int answer=checkStudent();
+            //cin>>passwordStudent[countPassword];
+            cin>>passwordStudent;
+            int answer=checkStudent(usernameStudent,passwordStudent);                  //check the identity of student
             if(answer==0)
             {
                 gotoxy(x,y);
@@ -334,7 +343,8 @@ int main()
                     gotoxy(x,y+3);
                     Sleep(150);
                     cout<<"Enter your username : ";
-                    cin>>usernameStudent[0];
+                    cin>>usernameStudent[countName];
+                    saveDataName();
                     password:gotoxy(x,y+4);
                     Sleep(150);
                     gotoxy(x,y+4);
@@ -343,7 +353,8 @@ int main()
                     gotoxy(x,y+4);
                     Sleep(150);
                     cout<<"Enter your password : ";
-                    cin>>passwordStudent[0];
+                    cin>>passwordStudent[countPassword];
+                    saveDataPassword();
                     int f=checkPassword();
                     if(f==0)
                     {
@@ -662,15 +673,54 @@ void gotoxy(int x, int y) {
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-int checkStudent()
+int checkStudent(string usernameStudent,string passwordStudent)
 {
     setFontColor(1);
-    if(usernameStudent[0]=="sulaman" && passwordStudent[0]=="123")
+    fstream file;
+    int nameIdx=-1;
+    bool value=false;
+    string name;
+    file.open("studentName.txt",ios::in);
+    while(!file.eof())
     {
-        return 1;
+        nameIdx++;
+        getline(file,name);
+        if(usernameStudent==name)
+        {
+            value=true;
+            break;
+        }
     }
-    if(usernameStudent[0]!="sulaman" && passwordStudent[0]!="123")
+    file.close();
+    if(value==true)
+    {
+        fstream file1;
+        string password;
+        int passwordIdx=-1;
+        file1.open("studentPassword.txt",ios::in);
+        while(!file1.eof())
+        {
+            passwordIdx++;
+            getline(file1,password);
+            if(passwordStudent==password)
+            {
+                break;
+            }
+        }
+        file1.close();
+        if(nameIdx==passwordIdx)
+        {
+            return 1;
+        }
+        if(nameIdx!=passwordIdx)
+        {
+            return 0;
+        }
+    }
+    if(value==false)
+    {
         return 0;
+    }
 }
 int printMenuStudent()
 {
@@ -801,10 +851,10 @@ void viewDetails(int result)
     {      
         gotoxy(x,y+3);
         Sleep(150);
-        cout<<"Username : "<<usernameStudent[0];
+        cout<<"Username : "<<usernameStudent[countName];
         gotoxy(x,y+4);
         Sleep(150);
-        cout<<"Password  : "<<passwordStudent[0];
+        cout<<"Password  : "<<passwordStudent[countPassword];
     }
 }
 void updateProfile(int result)
@@ -818,20 +868,20 @@ void updateProfile(int result)
         cout<<"you want to update your : ";
         gotoxy(x,y+6);
         Sleep(150);
-        cout<<"1.Username   : "<<usernameStudent[0];
+        cout<<"1.Username   : "<<usernameStudent[countName];
         gotoxy(x,y+7);
         Sleep(150);
-        cout<<"2.Password   : "<<passwordStudent[0];
+        cout<<"2.Password   : "<<passwordStudent[countPassword];
         cin>>n;
         if(n==1)
         {
             cout<<"enter your new username : ";
-            cin>>usernameStudent[0];
+            cin>>usernameStudent[countName];
         }
         if(n==2)
         {
             cout<<"Enter youe new password : ";
-            cin>>passwordStudent[0];
+            cin>>passwordStudent[countPassword];
         }
     }
     if(result==2)
@@ -850,10 +900,10 @@ void updateProfile(int result)
         cout<<"3.Email          :   "<<email[0];
         gotoxy(x,y+10);
         Sleep(150);
-        cout<<"4.Username       :   "<<usernameStudent[0];
+        cout<<"4.Username       :   "<<usernameStudent[countName];
         gotoxy(x,y+11);
         Sleep(150);
-        cout<<"5.Password       :   "<<passwordStudent[0];
+        cout<<"5.Password       :   "<<passwordStudent[countPassword];
         cin>>n;
         if(n==1)
         {
@@ -873,12 +923,12 @@ void updateProfile(int result)
         if(n==4)
         {
             cout<<"enter your new username  : ";
-            cin>>usernameStudent[0];
+            cin>>usernameStudent[countName];
         }
         if(n==5)
         {
             cout<<"Enter youe new password  : ";
-            cin>>passwordStudent[0];
+            cin>>passwordStudent[countPassword];
         }
 
     }
@@ -1192,7 +1242,7 @@ int checkPassword()
     setFontColor(1);
     if(selectRole==2)
     {
-        string p=passwordStudent[0];
+        string p=passwordStudent[countPassword];
         int count=0;
         while(p[count]!='\0')
         {
@@ -1238,4 +1288,43 @@ void setFontColor(int color)
 
     // Set the console text color
     SetConsoleTextAttribute(hConsole, color);
+}
+void loadData()
+{
+    fstream file;
+    string name;
+    file.open("StudentName.txt",ios::in);
+    while(!file.eof())
+    {
+        getline(file,name);
+        usernameStudent[countName]=name;
+        countName++;
+    }
+    file.close();
+    fstream file1;
+    string password;
+    file1.open("StudentPassword.txt",ios::in);
+    while(!file1.eof())
+    {
+        getline(file1,password);
+        passwordStudent[countPassword]=password;
+        countPassword++;
+    }
+    file1.close();
+}
+void saveDataName()
+{
+    fstream file;
+    string name;
+    file.open("StudentName.txt",ios::app);
+    file<<endl<<usernameStudent[countName];
+    file.close();
+}
+void saveDataPassword()
+{
+    fstream file;
+    string name;
+    file.open("StudentPassword.txt",ios::app);
+    file<<endl<<passwordStudent[countPassword];
+    file.close();
 }
