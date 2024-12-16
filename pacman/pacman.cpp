@@ -1,6 +1,7 @@
 #include<iostream>
 #include<windows.h>
 #include<conio.h>
+#include<ctime>
 using namespace std;
 void gotoxy(int s, int);
 void printMaze();
@@ -31,6 +32,7 @@ void showScore();
 void setConsoleFontSize(int size);
 void pp();
 int printWin();
+int getRandomInteger();
 
 char getCharAtxy(short int x, short int y);
 int px=2,py=36;
@@ -39,7 +41,7 @@ int gx2=71,gy2=1;
 int gx3=2,gy3=26;
 int score=0;
 int lives=3;
-int wx=41,wy=18;
+int wx=41,wy=18,tx=0,ty=0;
 
 main()
 {
@@ -50,6 +52,7 @@ main()
     cout<<"win point";
     while(true)
     {
+    getRandomInteger();
     printPacman(px,py);
     Sleep(10);
     int result=movepacman();
@@ -500,4 +503,26 @@ void setConsoleFontSize(int size) {
     if (!SetCurrentConsoleFontEx(hConsole, FALSE, &fontInfo)) {
         std::cerr << "Error: Could not set console font size" << std::endl;
     }
+}
+
+int getRandomInteger()
+{
+    setColor(6);
+    int array[5]={22,45,33,25,18};
+    srand(time(0));
+    int number=rand()%5;
+    tx=array[number];
+    char ch=getCharAtxy(tx,ty);
+    if(ch!='$')
+    {
+        ty=6;
+        gotoxy(tx,ty);
+        cout<<"$";
+        char ch=getCharAtxy(tx,ty);
+        if(ch!='$')
+        {
+            getRandomInteger();
+        }
+    }
+
 }
