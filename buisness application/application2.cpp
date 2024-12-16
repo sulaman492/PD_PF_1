@@ -2,6 +2,7 @@
 #include<conio.h>
 #include<windows.h>
 #include<string>
+#include<sstream>
 #include<fstream>
 using namespace std;
 const int arraysize=10;
@@ -682,61 +683,158 @@ void gotoxy(int x, int y) {
 
 int checkStudent(string usernameStudent,string passwordStudent)
 {
-    setFontColor(1);
+    //setFontColor(1);
+    //fstream file;
+    //int nameIdx=-1;
+    //bool value=false;
+    //string name;
+    //file.open("studentName.txt",ios::in);
+    //while(!file.eof())
+    //{
+    //    while(getline(file,name,'\t'))
+    //    {
+    //        nameIdx++;
+    //        if(nameIdx==3)
+    //        {
+    //            value=true;
+    //            break;
+//
+    //        }
+    //    }
+    //    break;
+    //    //if(usernameStudent==name)
+    //    //{
+    //    //    value=true;
+    //    //    break;
+    //    //}
+    //}
+    //file.close();
+    //if(value==true)
+    //{
+    //    fstream file1;
+    //    string password;
+    //    int passwordIdx=-1;
+    //    file1.open("studentName.txt",ios::in);
+    //    while(!file1.eof())
+    //    {
+    //        passwordIdx++;
+    //        getline(file1,password);
+    //        if(passwordStudent==password)
+    //        {
+    //            break;
+    //        }
+    //    }
+    //    file1.close();
+    //    if(nameIdx==passwordIdx)
+    //    {
+    //        return 1;
+    //    }
+    //    if(nameIdx!=passwordIdx)                     
+    //    {
+    //        return 0;
+    //    }
+    //}
+    //if(value==false)
+    //{
+    //    return 0;
+    //}
     fstream file;
-    int nameIdx=-1;
-    bool value=false;
+    string line;
+    const int targetIndex = 3; // 0-based index for the 4th column (username)
     string name;
-    file.open("studentName.txt",ios::in);
-    while(!file.eof())
-    {
-        while(getline(file,name,'\t'))
-        {
-            nameIdx++;
-            if(nameIdx==3)
-            {
-                value=true;
-                break;
 
-            }
-        }
-        break;
-        //if(usernameStudent==name)
-        //{
-        //    value=true;
-        //    break;
-        //}
+    file.open("StudentName.txt", ios::in); // Open the file in read mode
+    if (!file.is_open()) {
+        cout << "Error: Unable to open file!" << endl;
+        return 1;
     }
-    file.close();
-    if(value==true)
-    {
-        fstream file1;
-        string password;
-        int passwordIdx=-1;
-        file1.open("studentName.txt",ios::in);
-        while(!file1.eof())
-        {
-            passwordIdx++;
-            getline(file1,password);
-            if(passwordStudent==password)
-            {
+
+    //cout << "Fourth column values (Usernames):" << endl;
+    string array[10];
+    int count=0;
+    int i=0;
+    // Read each line from the file
+    while (getline(file, line)) {
+        stringstream ss(line); // Process the current line
+        int index = 0;
+        bool found = false;
+
+        while (getline(ss, name, '*')) { // Split the line by *
+            if (index == targetIndex) {
+                //cout << name << endl; // Print the 4th value (username)
+                array[i]=name;
+                i++;
+                found = true;
                 break;
             }
+            index++;
         }
-        file1.close();
-        if(nameIdx==passwordIdx)
-        {
-            return 1;
-        }
-        if(nameIdx!=passwordIdx)                     
-        {
-            return 0;
+
+        if (!found) {
+            cout << "Error: Line does not contain enough columns." << endl;
         }
     }
-    if(value==false)
+
+    file.close(); // Always close the file
+    for(int i=0;i<10;i++)
     {
-        return 0;
+        if(usernameStudent==array[i])
+        {
+            count++;
+        }
     }
+    fstream file1;
+    string line1;
+    const int targetIndex1 = 4; // 0-based index for the 5th column (username)
+    //string name;
+
+    file1.open("StudentName.txt", ios::in); // Open the file in read mode
+    if (!file1.is_open()) {
+        cout << "Error: Unable to open file!" << endl;
+        return 1;
+    }
+
+    //cout << "Fourth column values (Usernames):" << endl;
+    string array1[10];
+    string name1;
+    int j=0;
+    // Read each line from the file
+    while (getline(file1, line1)) {
+        stringstream ss(line); // Process the current line
+        int index = 0;
+        bool found = false;
+
+        while (getline(ss, name1, '*')) { // Split the line by *
+            if (index == targetIndex1) {
+                //cout << name << endl; // Print the 4th value (username)
+                array[j]=name1;
+                j++;
+                found = true;
+                break;
+            }
+            index++;
+        }
+
+        if (!found) {
+            cout << "Error: Line does not contain enough columns." << endl;
+        }
+    }
+
+    file1.close(); // Always close the file
+    for(int i=0;i<10;i++)
+    {
+        if(passwordStudent==array1[i])
+        {
+            count++;
+        }
+    }
+    if(checkStudent)
+    {
+        return 1;
+    }
+    else
+        return 0;
+
 }
 int printMenuStudent()
 {
@@ -1425,7 +1523,7 @@ void saveDataStudent(string(&student)[arraysize][6])
     fstream file;
     string name;
     file.open("studentName.txt",ios::app);
-    file<<student[countStudent][0]<<"\t\t\t\t"<<student[countStudent][1]<<"\t\t\t\t"<<student[countStudent][2]<<"\t\t\t\t"<<student[countStudent][3]<<"\t\t\t\t"<<student[countStudent][4]<<endl;
+    file<<student[countStudent][0]<<"*             "<<student[countStudent][1]<<"*             "<<student[countStudent][2]<<"*               "<<student[countStudent][3]<<"*              "<<student[countStudent][4]<<endl;
     file.close();
 
 }
