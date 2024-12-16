@@ -1,27 +1,32 @@
 #include<iostream>
 #include<conio.h>
 #include<windows.h>
+#include<string>
 #include<fstream>
 using namespace std;
+const int arraysize=10;
 int printMenu();
-int checkPassword();
+int checkPassword(string(&student)[arraysize][6]);
 int deletepassword();
 int choice();
 int AddRemoveTeacher();
+int checkPhoneTeacher();
 int addTeacher();
 int removeTeacher();
 int viewTeacher();
 int functionalityAdministrator();
 int printMenuStudent();
 int addCourses();
+int checkPasswordofTeacher();
 int addStudent();
 int removeStudent();
 int viewCourses();
 int removeCourses();
 int coursesEnrollment();
 int checkStudent(string usernameStudent,string passwordStudent);
-int checkEmail();
-int checkPhone();
+int checkEmail(string (&student)[arraysize][6]);
+int checkEmailTeacher();
+int checkPhone(string (&student)[arraysize][6]);
 int printMenuTeacher();
 int manageStudent();
 int viewStudent();
@@ -36,11 +41,11 @@ void printBody();
 void deleteMenu();
 void gotoxy(int,int);
 int checkPasswordTeacher();
-void saveDataPassword();
-void saveDataName();
-void loadData();
+void saveDataStudent(string (&student)[arraysize][6]);
+void loadData(string (&student)[arraysize][6]);
+int countStudent=0;
 int x=4,y=7,countName=0,countPassword;
-const int arraysize=10;
+//const int arraysize=10;
 string teacher[arraysize];
 string username[arraysize];
 string password[arraysize];
@@ -48,7 +53,7 @@ string subject[arraysize];
 string name[arraysize];
 string usernameStudent[arraysize];
 string passwordStudent[arraysize];
-string email[arraysize];
+string emailStudent[arraysize];
 string course[arraysize];
 string courseTeacher[arraysize];
 string courseCode[arraysize];
@@ -64,7 +69,8 @@ int phoneStudent[arraysize];
 int signinsignup,result,selectRole;
 int main()
 {   
-    loadData();
+    string student[arraysize][6];
+    loadData(student);
     cout<<countName;
     int answer;
     system("cls");
@@ -293,20 +299,20 @@ int main()
             }
         }                        
     }
-    if(signinsignup==2)
+    if(signinsignup==2)                             //user chposes to signup/create account
     {
-        selectRole=menuWithoutAdmin();
+        selectRole=menuWithoutAdmin();              //showing menu without admin       
         deleteMenu();
-        if(selectRole==2)
+        if(selectRole==2)                          //user is student
         {
             gotoxy(x,y);
-            cout<<"Enter your name : ";
-            cin>>name[0];
+            cout<<"Enter your name : ";            //name of student
+            cin>>student[countStudent][0];
             phone:gotoxy(x,y+1);
             Sleep(150);
             cout<<"enter your phone : ";
-            cin>>phoneStudent[0];
-            int check=checkPhone();
+            cin>>student[countStudent][1];
+            int check=checkPhone(student);
             if(check==0)
             {
                 gotoxy(x,y+1);
@@ -324,8 +330,8 @@ int main()
                 email2:gotoxy(x,y+2);
                 Sleep(150);
                 cout<<"Enter your email : ";
-                cin>>email[0];
-                int c=checkEmail();
+                cin>>student[countStudent][2];
+                int c=checkEmail(student);
                 if(c==0)
                 {
                     gotoxy(x,y+2);
@@ -343,8 +349,8 @@ int main()
                     gotoxy(x,y+3);
                     Sleep(150);
                     cout<<"Enter your username : ";
-                    cin>>usernameStudent[countName];
-                    saveDataName();
+                    cin>>student[countStudent][3];
+                    //saveDataName();
                     password:gotoxy(x,y+4);
                     Sleep(150);
                     gotoxy(x,y+4);
@@ -353,9 +359,9 @@ int main()
                     gotoxy(x,y+4);
                     Sleep(150);
                     cout<<"Enter your password : ";
-                    cin>>passwordStudent[countPassword];
-                    saveDataPassword();
-                    int f=checkPassword();
+                    cin>>student[countStudent][4];
+                    //saveDataPassword();
+                    int f=checkPassword(student);
                     if(f==0)
                     {
                         gotoxy(x,y+4);
@@ -373,6 +379,7 @@ int main()
                         gotoxy(x,y+5);
                         Sleep(150);
                         cout<<"Your account is created : ";
+                        saveDataStudent(student);
                         print_menu1:deleteMenu();
                         int a=printMenuStudent();
                         if(a==1)
@@ -427,7 +434,7 @@ int main()
             Sleep(150);
             cout<<"enter your phone : ";
             cin>>phoneTeacher[0];
-            int d=checkPhone();
+            int d=checkPhoneTeacher();
             if(d==0)
             {
                 gotoxy(x,y+1);
@@ -446,7 +453,7 @@ int main()
                 Sleep(150);
                 cout<<"Enter your email : ";
                 cin>>emailTeacher[0];
-                int c=checkEmail();
+                int c=checkEmailTeacher();
                 if(c==0)
                 {
                     gotoxy(x,y+2);
@@ -472,7 +479,7 @@ int main()
                     Sleep(150);
                     cout<<"Enter your password : ";
                     cin>>passwordTeacher[0];
-                    int c=checkPassword();
+                    int c=checkPasswordofTeacher();
                     if(c==0)
                     {
                         gotoxy(x,y+4);
@@ -680,7 +687,7 @@ int checkStudent(string usernameStudent,string passwordStudent)
     int nameIdx=-1;
     bool value=false;
     string name;
-    file.open("studentName.txt",ios::in);
+    file.open("studentUserName.txt",ios::in);
     while(!file.eof())
     {
         nameIdx++;
@@ -712,7 +719,7 @@ int checkStudent(string usernameStudent,string passwordStudent)
         {
             return 1;
         }
-        if(nameIdx!=passwordIdx)
+        if(nameIdx!=passwordIdx)                     
         {
             return 0;
         }
@@ -845,7 +852,7 @@ void viewDetails(int result)
         cout<<"Phone  : "<<phoneStudent[0];
         gotoxy(x,y+2);
         Sleep(150);
-        cout<<"Email  : "<<email[0];
+        cout<<"Email  : "<<emailStudent[0];
     }  
     if(result==2 || result==1)
     {      
@@ -897,7 +904,7 @@ void updateProfile(int result)
         cout<<"2.Phone          :   "<<phoneStudent[0];
         gotoxy(x,y+9);
         Sleep(150);
-        cout<<"3.Email          :   "<<email[0];
+        cout<<"3.Email          :   "<<emailStudent[0];
         gotoxy(x,y+10);
         Sleep(150);
         cout<<"4.Username       :   "<<usernameStudent[countName];
@@ -918,7 +925,7 @@ void updateProfile(int result)
         if(n==3)
         {
             cout<<"enter your new email     : ";
-            cin>>email[0];
+            cin>>emailStudent[0];
         }
         if(n==4)
         {
@@ -935,12 +942,12 @@ void updateProfile(int result)
     cout<<"Changes saved : ";
     
 }
-int checkPhone()
+int checkPhone(string (&student)[arraysize][6])
 {
     setFontColor(1);
     if(selectRole==2)
     {
-        int num=phoneStudent[0];
+        int num=stoi(student[countStudent][1]);
         int count=0;
         while(num>0)
         {
@@ -956,31 +963,50 @@ int checkPhone()
             return 0;
         }
     }
-    if(selectRole==1)
-    {
-        int num=phoneTeacher[0];
-        int count=0;
-        while(num>0)
-        {
-            num=num/10;
-            count++;
-        }
-        if(count==10)
-        {
-            return 1;
-        }
-        if(count!=10)
-        {
-            return 0;
-        }
-    }    
+    //if(selectRole==1)
+    //{
+    //    int num=phoneTeacher[0];
+    //    int count=0;
+    //    while(num>0)
+    //    {
+    //        num=num/10;
+    //        count++;
+    //    }
+    //    if(count==10)
+    //    {
+    //        return 1;
+    //    }
+    //    if(count!=10)
+    //    {
+    //        return 0;
+    //    }
+    //}    
 }
-int checkEmail()
+int checkPhoneTeacher()
+{
+    int num=phoneTeacher[0];
+        int count=0;
+        while(num>0)
+        {
+            num=num/10;
+            count++;
+        }
+        if(count==10)
+        {
+            return 1;
+        }
+        if(count!=10)
+        {
+            return 0;
+        }
+}
+
+int checkEmail(string (&student)[arraysize][6])
 {
     setFontColor(1);
     if(selectRole==2)
     {
-        string email1=email[0];
+        string email1=student[countStudent][2];
         int i=0,valid=0;
         while(email1[i]!='\0')
         {
@@ -1003,32 +1029,58 @@ int checkEmail()
             return 0;
         }
     }
-    if(selectRole==1)
-    {
-        string email1=emailTeacher[0];
-        int i=0,valid=0;
-        while(email1[i]!='\0')
-        {
-            if(email1[i]=='@')
-            {
-                valid++;
-            }
-            if(email1[i]=='.')
-            {
-                valid++;
-            }
-            i++;
-        }
-        if(valid==2)
-        {
-            return 1;
-        }
-        if(valid<2||valid>2)
-        {
-            return 0;
-        }
-    }
+    //if(selectRole==1)
+    //{
+    //    string email1=emailTeacher[0];
+    //    int i=0,valid=0;
+    //    while(email1[i]!='\0')
+    //    {
+    //        if(email1[i]=='@')
+    //        {
+    //            valid++;
+    //        }
+    //        if(email1[i]=='.')
+    //        {
+    //            valid++;
+    //        }
+    //        i++;
+    //    }
+    //    if(valid==2)
+    //    {
+    //        return 1;
+    //    }
+    //    if(valid<2||valid>2)
+    //    {
+    //        return 0;
+    //    }
+    //}
     
+}
+int checkEmailTeacher()
+{
+    string email1=emailTeacher[0];
+        int i=0,valid=0;
+        while(email1[i]!='\0')
+        {
+            if(email1[i]=='@')
+            {
+                valid++;
+            }
+            if(email1[i]=='.')
+            {
+                valid++;
+            }
+            i++;
+        }
+        if(valid==2)
+        {
+            return 1;
+        }
+        if(valid<2||valid>2)
+        {
+            return 0;
+        }
+
 }
 bool administrator(string username,string password)
 {
@@ -1237,12 +1289,11 @@ int removeStudent()
     gotoxy(x,y+3);
     cout<<"student removed ";
 }
-int checkPassword()
+int checkPassword(string(&student)[arraysize][6])
 {
     setFontColor(1);
-    if(selectRole==2)
-    {
-        string p=passwordStudent[countPassword];
+
+        string p=student[countStudent][4];
         int count=0;
         while(p[count]!='\0')
         {
@@ -1254,10 +1305,25 @@ int checkPassword()
         }
         else
             return 0;
-    }
-    if(selectRole==1)
-    {
-        string p=passwordTeacher[0];
+   //if(selectRole==1)
+   //{
+   //    string p=passwordTeacher[0];
+   //    int count=0;
+   //    while(p[count]!='\0')
+   //    {
+   //        count++;
+   //    }
+   //    if(count>=8)
+   //    {
+   //        return 1;
+   //    }
+   //    else
+   //        return 0;
+   //}
+}
+int checkPasswordofTeacher()
+{
+     string p=passwordTeacher[0];
         int count=0;
         while(p[count]!='\0')
         {
@@ -1269,7 +1335,7 @@ int checkPassword()
         }
         else
             return 0;
-    }
+
 }
 int checkPasswordTeacher()
 {
@@ -1289,42 +1355,72 @@ void setFontColor(int color)
     // Set the console text color
     SetConsoleTextAttribute(hConsole, color);
 }
-void loadData()
+void loadData(string (&student)[arraysize][6])
 {
     fstream file;
     string name;
-    file.open("StudentName.txt",ios::in);
+    file.open("StudentUserName.txt",ios::in);
     while(!file.eof())
     {
         getline(file,name);
-        usernameStudent[countName]=name;
-        countName++;
+        student[countStudent][0]=name;
+        countStudent++;
     }
     file.close();
+    //fstream file1;
+    //string password;
+    //file1.open("StudentPassword.txt",ios::in);
+    //while(!file1.eof())
+    //{
+    //    getline(file1,password);
+    //    passwordStudent[countPassword]=password;
+    //    countPassword++;
+    //}
+    //file1.close();
+    //fstream file2;
+    //string password;
+    //file1.open("phoneStudent.txt",ios::in);
+    //while(!file2.eof())
+    //{
+    //    getline(file2,password);
+    //    passwordStudent[countPassword]=password;
+    //    countPassword++;
+    //}
+    //file2.close();
+    //fstream file3;
+    //string password;
+    //file1.open("emailStudent.txt",ios::in);
+    //while(!file3.eof())
+    //{
+    //    getline(file3,password);
+    //    passwordStudent[countPassword]=password;
+    //    countPassword++;
+    //}
+    //file3.close();
+}
+void saveDataStudent(string (&student)[arraysize][6])
+{
+    fstream file;
+    //string name;
+    file.open("StudentUserName.txt",ios::app);
+    file<<endl<<student[countStudent][0];
+    file.close();
+
     fstream file1;
-    string password;
-    file1.open("StudentPassword.txt",ios::in);
-    while(!file1.eof())
-    {
-        getline(file1,password);
-        passwordStudent[countPassword]=password;
-        countPassword++;
-    }
+    //string name;
+    file1.open("phoneStudent.txt",ios::app);
+    file1<<endl<<student[countStudent][1];
     file1.close();
-}
-void saveDataName()
-{
-    fstream file;
-    string name;
-    file.open("StudentName.txt",ios::app);
-    file<<endl<<usernameStudent[countName];
-    file.close();
-}
-void saveDataPassword()
-{
-    fstream file;
-    string name;
-    file.open("StudentPassword.txt",ios::app);
-    file<<endl<<passwordStudent[countPassword];
-    file.close();
+
+    fstream file2;
+    //string name;
+    file2.open("emailStudent.txt",ios::app);
+    file2<<endl<<student[countStudent][2];
+    file2.close();
+
+    fstream file3;
+    //string name;
+    file3.open("StudentPassword.txt",ios::app);
+    file3<<endl<<student[countStudent][4];
+    file3.close();
 }
