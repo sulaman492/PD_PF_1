@@ -6,7 +6,7 @@
 using namespace std;
 const int arraysize=10;
 int printMenu();
-int checkPassword(string(&student)[arraysize][6]);
+bool checkPassword(string(&student)[arraysize][6]);
 int deletepassword();
 int choice();
 int AddRemoveTeacher();
@@ -78,7 +78,7 @@ int main()
     Menu:deleteMenu();
     signinsignup = choice();
     deleteMenu();
-    if(signinsignup==1)                         //user choses to signup                                    
+    if(signinsignup==1)                         //user choses to signin                                    
     {
         setFontColor(1);
         gotoxy(x,y);
@@ -361,8 +361,8 @@ int main()
                     cout<<"Enter your password : ";
                     cin>>student[countStudent][4];
                     //saveDataPassword();
-                    int f=checkPassword(student);
-                    if(f==0)
+                    bool f=checkPassword(student);
+                    if(f==false)
                     {
                         gotoxy(x,y+4);
                         cout<<"Password should contain 8 letters/numbers ";
@@ -374,7 +374,7 @@ int main()
                             goto password; 
                         }    
                     }
-                    if(f==1)
+                    if(f)
                     {
                         gotoxy(x,y+5);
                         Sleep(150);
@@ -687,16 +687,25 @@ int checkStudent(string usernameStudent,string passwordStudent)
     int nameIdx=-1;
     bool value=false;
     string name;
-    file.open("studentUserName.txt",ios::in);
+    file.open("studentName.txt",ios::in);
     while(!file.eof())
     {
-        nameIdx++;
-        getline(file,name);
-        if(usernameStudent==name)
+        while(getline(file,name,'\t'))
         {
-            value=true;
-            break;
+            nameIdx++;
+            if(nameIdx==3)
+            {
+                value=true;
+                break;
+
+            }
         }
+        break;
+        //if(usernameStudent==name)
+        //{
+        //    value=true;
+        //    break;
+        //}
     }
     file.close();
     if(value==true)
@@ -704,7 +713,7 @@ int checkStudent(string usernameStudent,string passwordStudent)
         fstream file1;
         string password;
         int passwordIdx=-1;
-        file1.open("studentPassword.txt",ios::in);
+        file1.open("studentName.txt",ios::in);
         while(!file1.eof())
         {
             passwordIdx++;
@@ -1289,37 +1298,22 @@ int removeStudent()
     gotoxy(x,y+3);
     cout<<"student removed ";
 }
-int checkPassword(string(&student)[arraysize][6])
+bool checkPassword(string(&student)[arraysize][6])       //checking the password of student
 {
     setFontColor(1);
 
         string p=student[countStudent][4];
         int count=0;
-        while(p[count]!='\0')
+        while(p[count]!='\0')                           //counting the number of digits
         {
             count++;
         }
-        if(count>=8)
+        if(count>=8)                                    //digits should be greater than 8
         {
-            return 1;
+            true;
         }
-        else
-            return 0;
-   //if(selectRole==1)
-   //{
-   //    string p=passwordTeacher[0];
-   //    int count=0;
-   //    while(p[count]!='\0')
-   //    {
-   //        count++;
-   //    }
-   //    if(count>=8)
-   //    {
-   //        return 1;
-   //    }
-   //    else
-   //        return 0;
-   //}
+        else                                            //else false
+            false;
 }
 int checkPasswordofTeacher()
 {
@@ -1355,18 +1349,18 @@ void setFontColor(int color)
     // Set the console text color
     SetConsoleTextAttribute(hConsole, color);
 }
-void loadData(string (&student)[arraysize][6])
+void loadData(string (&student)[arraysize][6])                  //loading the data
 {
     fstream file;
     string name;
-    file.open("StudentUserName.txt",ios::in);
+    file.open("StudentName.txt",ios::in);                       //opening the student name file in read mode 
     while(!file.eof())
     {
         getline(file,name);
         student[countStudent][0]=name;
         countStudent++;
     }
-    file.close();
+    file.close();                                           //closing the file
     //fstream file1;
     //string password;
     //file1.open("StudentPassword.txt",ios::in);
@@ -1398,29 +1392,40 @@ void loadData(string (&student)[arraysize][6])
     //}
     //file3.close();
 }
-void saveDataStudent(string (&student)[arraysize][6])
+//void saveDataStudent(string (&student)[arraysize][6])           //saving data student
+//{
+ //   fstream file;
+ //   file.open("StudentName.txt",ios::app);                    // appending name of student
+ //   file<<endl<<student[countStudent][0];
+ //   file.close();
+//
+ //   fstream file1;
+ //   file1.open("phoneStudent.txt",ios::app);                // appending phone of student
+ //   file1<<endl<<student[countStudent][1];
+ //   file1.close();
+//
+ //   fstream file4;
+ //   file4.open("studentUserName.txt",ios::app);               // appending username of student
+ //   file4<<endl<<student[countStudent][3];
+ //   file4.close();
+//
+ //   fstream file2;
+ //   file2.open("emailStudent.txt",ios::app);                    // appending email of student
+ //   file2<<endl<<student[countStudent][2];
+ //   file2.close();
+//
+//
+ //   fstream file3;
+ //   file3.open("StudentPassword.txt",ios::app);                 // appending password of student
+ //   file3<<endl<<student[countStudent][4];
+ //   file3.close();
+//}//
+void saveDataStudent(string(&student)[arraysize][6])
 {
     fstream file;
-    //string name;
-    file.open("StudentUserName.txt",ios::app);
-    file<<endl<<student[countStudent][0];
+    string name;
+    file.open("studentName.txt",ios::app);
+    file<<student[countStudent][0]<<"\t\t\t\t"<<student[countStudent][1]<<"\t\t\t\t"<<student[countStudent][2]<<"\t\t\t\t"<<student[countStudent][3]<<"\t\t\t\t"<<student[countStudent][4]<<endl;
     file.close();
 
-    fstream file1;
-    //string name;
-    file1.open("phoneStudent.txt",ios::app);
-    file1<<endl<<student[countStudent][1];
-    file1.close();
-
-    fstream file2;
-    //string name;
-    file2.open("emailStudent.txt",ios::app);
-    file2<<endl<<student[countStudent][2];
-    file2.close();
-
-    fstream file3;
-    //string name;
-    file3.open("StudentPassword.txt",ios::app);
-    file3<<endl<<student[countStudent][4];
-    file3.close();
 }

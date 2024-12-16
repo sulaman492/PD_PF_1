@@ -1,0 +1,6 @@
+Name   *             phone*               email*               username*                password*                      
+sulaman*		    01234567890	*	    @.*				sulaman*				123123123*
+sulaman*			01234567890	*	    @.*				saad*				    123123123*
+sulaman*			01234567890	*	    @.*				amjad*				    123123123*
+sulaman*			01234567890	*	    @.*				zain*				    123123123*
+sulaman*			01234567890	*	    @.*				sulaman*				123123123*
